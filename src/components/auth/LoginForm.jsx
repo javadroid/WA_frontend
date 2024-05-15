@@ -1,28 +1,39 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import React from 'react'
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
-import { signupSchema } from '../../utils/validation/validation';
+import { useDispatch, useSelector } from 'react-redux';
+import { signinSchema, signupSchema } from '../../utils/validation/validation';
 import AuthInput from '../customComponents/AuthInput';
 import { PulseLoader } from 'react-spinners';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../../utils/redux/features/useSlice';
 
 export default function LoginForm() {
-  const {status}=useSelector(state=>state.user)
+  const {status,error}=useSelector(state=>state.user)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(signupSchema),
+    resolver: yupResolver(signinSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    console.log(data)
+    const result = await dispatch(loginUser({ ...data }));
+    if (result.type.includes("fulfilled")) {
+      console.log(result)
+      // navigate("/home");
+    }else{
+//  await deletePicture(data.asset_id).then(async (res) => {
+//   console.log("res",res)
+// });
+    }
   };
-  console.log("values", watch());
-  console.log("errors ", errors);
+ 
   return (
     <div className="h-screen w-full flex items-center justify-center overflow-hidden">
       {/*Container*/}
@@ -52,6 +63,12 @@ export default function LoginForm() {
             register={register}
             error={errors?.password?.message}
           />
+             {/*If we have an error */}
+             {error ? (
+              <div>
+                <p className="text-red-400">{error}</p>
+              </div>
+            ) : null}
           {/*Submit button*/}
           <button
             className="w-full flex justify-center bg-green_1 text-gray-100 p-4 rounded-full tracking-wide font-semibold focus:outline-none hover:bg-green_2 shadow-lg cursor-pointer transition ease-in"
@@ -63,7 +80,7 @@ export default function LoginForm() {
           </button>
  {/*Sign in link*/}
 <p className="flex flex-col items-center justify-center mt-10 text-center text-md dark:text-dark_text_1">
-<span>have an account?</span>
+<span>New User?</span>
 <Link to={"/register"} className="hover:underline cursor-pointer transition ease-in duration-300" >Sign up</Link>
 </p>
         </form>

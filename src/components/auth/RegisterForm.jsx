@@ -6,8 +6,12 @@ import AuthInput from "../customComponents/AuthInput";
 import { useDispatch, useSelector } from "react-redux";
 import { PulseLoader } from "react-spinners";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../../utils/redux/features/useSlice";
+import {
+  changeStatus,
+  registerUser,
+} from "../../utils/redux/features/useSlice";
 import Picture from "./Picture";
+import axios from "axios";
 
 export default function RegisterForm() {
   const [picture, setpicture] = useState();
@@ -25,15 +29,59 @@ export default function RegisterForm() {
   });
 
   const onSubmit = async (data) => {
-    const result = await dispatch(registerUser({ ...data }));
+    dispatch(changeStatus("loading"));
 
+    if (picture) {
+      await uploadPicture().then(async (res) => {
+        data.picture = res.secure_url;
+        data.asset_id = res.asset_id;
+      });
+    }
+    const result = await dispatch(registerUser({ ...data }));
     if (result.type.includes("fulfilled")) {
-      navigate("/home");
+      // navigate("/home");
+    }else{
+//  await deletePicture(data.asset_id).then(async (res) => {
+//   console.log("res",res)
+// });
     }
   };
+  const uploadPicture = async () => {
+    let formData = new FormData();
+    formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_SECRET);
+    formData.append("file", picture);
 
+    const { data } = await axios.post(
+      `https://api.cloudinary.com/v1_1/${
+        import.meta.env.VITE_CLOUDINARY_NAME
+      }/image/upload`,
+      formData
+    );
+    return data;
+  };
+ const deletePicture = async (public_id) => {
+    
+
+    const { data } = await axios.delete(
+      `https://api.cloudinary.com/v1_1/${
+        import.meta.env.VITE_CLOUDINARY_NAME
+      }/image/destroy/${public_id}`,
+      {
+        headers:{
+Authorization:`Cloudinary ${import.meta.env.VITE_CLOUDINARY_API_KEY}:${import.meta.env.VITE_CLOUDINARY_API_SECRET}`
+        },
+        public_id,
+        api_secret:import.meta.env.VITE_CLOUDINARY_API_SECRET,
+        api_key:import.meta.env.VITE_CLOUDINARY_API_KEY
+      },
+      {
+        
+      }
+    );
+    return data;
+  };
   return (
-    <div className="h-screen w-full flex items-center justify-center overflow-hidden">
+    <div className=" min-h-screen w-full flex items-center justify-center overflow-hidden">
       {/*Container*/}
       <div className=" w-full max-w-md space-y-8 p-10 dark:bg-dark_bg_2 rounded-xl">
         {/*Heading*/}
@@ -73,10 +121,12 @@ export default function RegisterForm() {
             register={register}
             error={errors?.password?.message}
           />
-            {/*Picture */}
-            <Picture
+          {/*Picture */}
+          <Picture
             readablePicture={readablePicture}
-            />
+            setReadablePicture={setReadablePicture}
+            setpicture={setpicture}
+          />
           {/*If we have an error */}
           {error ? (
             <div>
