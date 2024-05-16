@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const ENDPOINT = `${import.meta.env.VITE_API_ENDPOINT}/conversation`;
+const ENDPOINT = `${import.meta.env.VITE_API_ENDPOINT}`;
+
 const initialState = {
   conversations: [],
   activeConversation: [],
   notifications: [],
+  messages: [],
   status: "",
   error: "",
 };
@@ -14,7 +16,7 @@ export const getConversations = createAsyncThunk(
   "conversation/all",
   async (token, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`${ENDPOINT}`, {
+      const { data } = await axios.get(`${ENDPOINT}/conversation`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -26,6 +28,59 @@ export const getConversations = createAsyncThunk(
   }
 );
 
+export const openCreateConversation = createAsyncThunk(
+  "conversation/open_create",
+  async (values, { rejectWithValue }) => {
+    const {token,receiver_id}=values
+    try {
+      const { data } = await axios.post(`${ENDPOINT}/conversation`,{
+        receiver_id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.error.message);
+    }
+  }
+);
+
+export const getConversationMessage = createAsyncThunk(
+  "conversation/messages",
+  async (values, { rejectWithValue }) => {
+    const {convo_id,token}=values
+    try {
+      const { data } = await axios.get(`${ENDPOINT}/message/${convo_id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.error.message);
+    }
+  }
+);
+export const sendMessage = createAsyncThunk(
+  "message/send_message",
+  async (values, { rejectWithValue }) => {
+    const {message,files,convo_id,token}=values
+    try {
+      const { data } = await axios.post(`${ENDPOINT}/message`,{
+        message,files,convo_id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.error.message);
+    }
+  }
+);
 export const chatSlice = createSlice({
   name: "chat",
   initialState,
@@ -42,13 +97,52 @@ export const chatSlice = createSlice({
       })
       .addCase(getConversations.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload;
+        state.conversations = action.payload;
         state.error = "";
       })
       .addCase(getConversations.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      }).addCase(openCreateConversation.pending, (state, action) => {
+        state.status = "loading";
+        state.error = "";
       })
+      .addCase(openCreateConversation.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.activeConversation = action.payload;
+        state.error = "";
+      })
+      .addCase(openCreateConversation.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(getConversationMessage.pending, (state, action) => {
+        state.status = "loading";
+        state.error = "";
+      })
+      .addCase(getConversationMessage.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.messages = action.payload;
+        state.error = "";
+      })
+      .addCase(getConversationMessage.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(sendMessage.pending, (state, action) => {
+        state.status = "loading";
+        state.error = "";
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.messages = [...state.messages,action.payload];
+        state.error = "";
+      })
+      .addCase(sendMessage.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      
       
   },
 });
