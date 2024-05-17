@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Attachment from "./Attachment";
 import { SendIcon } from "../../../assets/svg";
@@ -7,8 +7,9 @@ import { useDispatch } from "react-redux";
 import { sendMessage } from "../../../utils/redux/features/chatSlice";
 import { ClipLoader } from "react-spinners";
 import EmojiPickerApp from "./EmojiPicker";
+import SocketContext from "../../../context/SocketContext";
 
-export default function ChatAction({ status, user, activeConversation }) {
+function ChatAction({socket, status, user, activeConversation }) {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [loading, setloading] = useState(false)
@@ -22,6 +23,11 @@ export default function ChatAction({ status, user, activeConversation }) {
     message,
     files,
   };
+
+  useEffect(() => {
+    
+  }, [])
+  
   const handleSendMessage = async (e) => {
     e.preventDefault();
     setloading(true)
@@ -30,6 +36,7 @@ export default function ChatAction({ status, user, activeConversation }) {
       (message === "" && files.length !== 0)
     ) {
       const send = await dispatch(sendMessage(values));
+      socket.emit("send_message",send.payload)
       setMessage("");
       setshowPicker(false)
       setloading(true)
@@ -64,3 +71,12 @@ export default function ChatAction({ status, user, activeConversation }) {
     </form>
   );
 }
+
+const ChatActionWithSocket=(props)=>(
+  <SocketContext.Consumer >
+  {
+    (socket)=><ChatAction {...props} socket={socket}/>
+  }
+  </SocketContext.Consumer>
+)
+export default ChatActionWithSocket

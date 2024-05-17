@@ -1,10 +1,11 @@
 import React from "react";
 import { whatsappTimeDisplay } from "../../../utils/datatimeFormat";
 import { useDispatch, useSelector } from "react-redux";
-import { getConversationId } from "../../../utils/chat";
+import { getConversationId, getConversationName, getConversationPicture } from "../../../utils/chat";
 import { openCreateConversation } from "../../../utils/redux/features/chatSlice";
+import SocketContext from "../../../context/SocketContext";
 
-export default function Conversation({ convo }) {
+ function Conversation({ convo,socket,online }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { activeConversation } = useSelector((state) => state.chat);
@@ -12,8 +13,10 @@ export default function Conversation({ convo }) {
     receiver_id: getConversationId(user, convo.users),
     token: user.access_token,
   };
-  const openConversation = () => {
-    dispatch(openCreateConversation(values));
+  const openConversation = async () => {
+   const result=await dispatch(openCreateConversation(values));
+   
+   socket.emit("join_conversation",result.payload._id)
   };
 
   return (
@@ -23,22 +26,22 @@ export default function Conversation({ convo }) {
       ${convo._id === activeConversation._id ? "dark:bg-dark_hover_1":"hover:dark:bg-dark_bg_4 "}`}
     >
       {/** Container */}
-      <div className="relative w-full flex items-center justify-between py-[10px]">
+      <div className={`relative w-full flex items-center justify-between py-[10px] `} >
         {/** Left */}
         <div className="flex items-center gap-x-3">
           {/** User picture */}
-          <div className="relative min-w-[50px] h-[50px] rounded-full overflow-hidden">
+          <div className={`relative min-w-[50px] h-[50px] rounded-full overflow-hidden ${online&&"online"}`}>
             <img
               className="w-full h-full object-cover"
-              src={convo.picture}
-              alt={convo.name}
+              src={getConversationPicture(user, convo.users)}
+              alt={getConversationName(user, convo.users)}
             />
           </div>
           {/** Conversation name and message */}
           <div className="w-full flex flex-col">
             {/** Name */}
             <h1 className="font-bold flex items-center gap-x-2">
-              {convo?.name}
+              {getConversationName(user, convo.users)}
             </h1>
             {/** Message */}
             <div className="flex items-center gap-x-1 dark:text-dark_text_2">
@@ -65,4 +68,12 @@ export default function Conversation({ convo }) {
     </li>
   );
 }
-//
+
+const ConversationWithSocket=(props)=>(
+  <SocketContext.Consumer >
+  {
+    (socket)=><Conversation {...props} socket={socket}/>
+  }
+  </SocketContext.Consumer>
+)
+export default ConversationWithSocket

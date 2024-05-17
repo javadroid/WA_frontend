@@ -4,7 +4,6 @@ import TraingleIcon from "../../../assets/svg/TraingleIcon";
 
 export default function Message({ message, me }) {
    
-  console.log("messages", message);
   return (
     <div
       className={`w-full flex mt-2 space-x-3 max-w-xs ${

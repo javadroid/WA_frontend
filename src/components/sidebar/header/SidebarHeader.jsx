@@ -4,9 +4,11 @@ import CummunityIcon from "../../../assets/svg/Community";
 import { ChatIcon, DotsIcon, StoryIcon } from "../../../assets/svg";
 import Menu from "./Menu";
 export default function SidebarHeader() {
+  
   const { user } = useSelector((state) => state.user);
 const [showMenu, setshowMenu] = useState(false)
-  return (
+console.log(user.picture) 
+return (
     <div className="h-[50px] dark:bg-dark_bg_2 flex items-center p16">
       {/*Container*/}
 

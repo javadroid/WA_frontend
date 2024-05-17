@@ -2,22 +2,27 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getConversationId } from "../../../utils/chat";
 import { openCreateConversation } from "../../../utils/redux/features/chatSlice";
+import SocketContext from "../../../context/SocketContext";
 
-export default function Contact({ contact,setsearchResult }) {
-    const {user} =useSelector(state=>state.user)
-    const dispatch=useDispatch()
+function Contact({ socket, contact, setsearchResult }) {
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
-    const values={
-      receiver_id:contact._id,
-      token:user.access_token
-    }
-    const openConversation=async ()=>{
-    await  dispatch(openCreateConversation(values))
-    setsearchResult([])
-    }
-  
-    return (
-    <li onClick={openConversation} className="list-none h-[72px]  hover:dark:bg-dark_bg_4 cursor-pointer dark:text-dark_text_1 px-[10px]">
+  const values = {
+    receiver_id: contact._id,
+    token: user.access_token,
+  };
+  const openConversation = async () => {
+    const result = await dispatch(openCreateConversation(values));
+    socket.emit("join_conversation", result.payload._id);
+    setsearchResult([]);
+  };
+
+  return (
+    <li
+      onClick={openConversation}
+      className="list-none h-[72px]  hover:dark:bg-dark_bg_4 cursor-pointer dark:text-dark_text_1 px-[10px]"
+    >
       {/** Container */}
       <div className=" flex items-center justify-between gap-x-3 py-[10px]">
         {/** Contact */}
@@ -45,20 +50,21 @@ export default function Contact({ contact,setsearchResult }) {
           </div>
         </div>
         {/** Right */}
-        {
-            user._id===contact._id&&(
-                <div className="flex items-center gapx3">
-          <span className="dark:text-dark_text_2">
-            {"You"}
-          </span>
-        </div>
-            )
-        }
-        
+        {user._id === contact._id && (
+          <div className="flex items-center gapx3">
+            <span className="dark:text-dark_text_2">{"You"}</span>
+          </div>
+        )}
       </div>
       {/*Border*/}
       <div className="ml-16 border-b dark:border-b-dark_border_1"></div>
-    
     </li>
   );
 }
+
+const ContactWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <Contact {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+export default ContactWithSocket;
