@@ -7,7 +7,7 @@ import { openCreateConversation } from "../../../utils/redux/features/chatSlice"
 export default function Conversation({ convo }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
-
+  const { activeConversation } = useSelector((state) => state.chat);
   const values = {
     receiver_id: getConversationId(user, convo.users),
     token: user.access_token,
@@ -19,7 +19,8 @@ export default function Conversation({ convo }) {
   return (
     <li
       onClick={openConversation}
-      className="list-none h-[72px] w-full dark:bg-dark_bg_1 hover:dark:bg-dark_bg_4 cursor-pointer dark:text-dark_text_1 px-[10px]"
+      className={`list-none h-[72px] w-full dark:bg-dark_bg_1 cursor-pointer dark:text-dark_text_1 px-[10px] 
+      ${convo._id === activeConversation._id ? "dark:bg-dark_hover_1":"hover:dark:bg-dark_bg_4 "}`}
     >
       {/** Container */}
       <div className="relative w-full flex items-center justify-between py-[10px]">

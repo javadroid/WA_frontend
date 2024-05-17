@@ -9,7 +9,7 @@ export default function Sidebar() {
     const [searchResult, setsearchResult] = useState([])
     console.log(searchResult)
   return (
-    <div className='w-[40%] h-full select-none'>
+    <div className='flex0030 max-w-[30%] h-full select-none'>
       {/*Sidebar Header*/}
         <SidebarHeader/>
      {/*Notifications*/}
@@ -19,7 +19,7 @@ export default function Sidebar() {
      {/*Conversation*/}
    {
     searchResult.length>0?(
-      <SearchResults searchResults={searchResult}/>
+      <SearchResults setsearchResult={setsearchResult} searchResults={searchResult}/>
     ):(
       <Conversations />
     )

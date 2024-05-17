@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Contact from "./Contact";
 import { useSelector } from "react-redux";
 
-export default function SearchResults({ searchResults }) {
+export default function SearchResults({ setsearchResult,searchResults }) {
   const [resultData, setResultData] = useState(searchResults);
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function SearchResults({ searchResults }) {
         <ul>
           {searchResults &&
             searchResults.map((user) => [
-              <Contact contact={user} key={user._id} />,
+              <Contact setsearchResult={setsearchResult} contact={user} key={user._id} />,
             ])}
         </ul>
       </div>
