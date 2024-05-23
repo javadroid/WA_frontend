@@ -5,7 +5,7 @@ import Search from './search/Search'
 import Conversations from './conversation/Conversations'
 import SearchResults from './conversation/SearchResults'
 
-export default function Sidebar({onlineUsers}) {
+export default function Sidebar({onlineUsers,typing}) {
     const [searchResult, setsearchResult] = useState([])
 
   return (
@@ -21,7 +21,7 @@ export default function Sidebar({onlineUsers}) {
     searchResult.length>0?(
       <SearchResults setsearchResult={setsearchResult} searchResults={searchResult}/>
     ):(
-      <Conversations onlineUsers={onlineUsers} />
+      <Conversations typing={typing} onlineUsers={onlineUsers} />
     )
    }
      </div>

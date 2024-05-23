@@ -18,7 +18,7 @@ export default function Message({ message, me }) {
         >
 
         
-        <p className="float-left h-fill text-sm pb-4 pr-8 ">{message.message}</p>
+        <p className="float-left h-full text-sm pb-4 pr-8 ">{message.message}</p>
           
         <span className="absolute right-1.5 bottom-1.5 text-xs leading-none text-dark_text_5">
         {moment(message.updatedAt).format("HH:mm")}

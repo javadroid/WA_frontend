@@ -5,7 +5,7 @@ import { getConversationId, getConversationName, getConversationPicture } from "
 import { openCreateConversation } from "../../../utils/redux/features/chatSlice";
 import SocketContext from "../../../context/SocketContext";
 
- function Conversation({ convo,socket,online }) {
+ function Conversation({ convo,socket,online ,typing}) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { activeConversation } = useSelector((state) => state.chat);
@@ -47,9 +47,10 @@ import SocketContext from "../../../context/SocketContext";
             <div className="flex items-center gap-x-1 dark:text-dark_text_2">
               <div className="flex-1 items-center gap-x-1 dark:text-dark_text_2">
                 <p>
-                  {convo?.latestMessage?.message.length > 30
+                  {typing===convo._id?<p className="text-green_1">Typing...</p>:!convo?.latestMessage?.message ?"Files":convo?.latestMessage?.message?.length > 30
                     ? `${convo?.latestMessage?.message.substring(0, 30)}...`
-                    : `${convo?.latestMessage?.message}`}
+                    : `${convo?.latestMessage?.message}`
+                  }
                 </p>
               </div>
             </div>

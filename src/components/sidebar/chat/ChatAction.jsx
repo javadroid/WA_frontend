@@ -58,7 +58,7 @@ function ChatAction({socket, status, user, activeConversation }) {
         </ul>
         {/*Input*/}
 
-        <Input textRef={textRef}  message={message} setMessage={setMessage} />
+        <Input  textRef={textRef}  message={message} setMessage={setMessage} />
 
         <button type="submit" className="btn">
           {status === "loading" ? (

@@ -1,12 +1,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { DotsIcon, SearchLargeIcon } from "../../../assets/svg";
-import { getConversationId, getConversationName, getConversationPicture } from "../../../utils/chat";
+import { getConversationId, getConversationName, getConversationPicture, isUserOnline } from "../../../utils/chat";
 
-export default function ChatHeader({onlineUsers,activeConversation,user}) {
-  const { name, picture ,users} = activeConversation;
-  let check=onlineUsers?.find((u)=>u.userId===getConversationId(user,users))
- console.log("check",check,onlineUsers)
+export default function ChatHeader({onlineUsers,activeConversation,user,typing}) {
+  const { _id,name, picture ,users} = activeConversation;
+  
+ 
   return (
     <div className="h-[59px] dark:bg-dark_bg_2 flex items-center p16 select-none">
       <div className="w-full flex items-center justify-between">
@@ -23,7 +23,7 @@ export default function ChatHeader({onlineUsers,activeConversation,user}) {
             <h1 className="dark:text-white text-md font-bold">
               {getConversationName(user, users).split(" ")[0][0].toUpperCase()+getConversationName(user, users).substring(1).toLowerCase()}
             </h1>
-            <span className="text-xs dark:text-dark_svg_2">{check?"online":"offline"}</span>
+            <span className="text-xs dark:text-dark_svg_2">{typing===_id?<p className="text-green_1">Typing...</p>:isUserOnline(user,users,onlineUsers)?"online":"offline"}</span>
           </div>
         </div>
 
