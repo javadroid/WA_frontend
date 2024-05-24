@@ -22,7 +22,7 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data) => {
-    console.log(data)
+  
     const result = await dispatch(loginUser({ ...data }));
     if (result.type.includes("fulfilled")) {
       console.log(result)

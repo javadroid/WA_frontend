@@ -37,7 +37,7 @@ export default function AddFile({ setactiveIndex }) {
             file.type !==
               "appliction/vnd.openxmlformats-officedocument.presentationml.presentation"
           ) {
-            console.log(file.type)
+            
             files.filter((item) => item.name !== file.name);
             return;
           }else if (file.size > 1024 * 1024 * 10) {

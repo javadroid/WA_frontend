@@ -6,7 +6,7 @@ import { getConversationMessage } from '../../../utils/redux/features/chatSlice'
 import ChatAction from './ChatAction';
 import FilesPreview from './Attachments/filesPreview/FilesPreview';
 
-export default function ChatContainer({onlineUsers,typing}) {
+export default function ChatContainer({onlineUsers,typing,callUser}) {
   const dispatch =useDispatch()
   const { activeConversation,messages,status } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.user);
@@ -25,7 +25,7 @@ export default function ChatContainer({onlineUsers,typing}) {
   return (
     <div className="relative h-full w-full  select-none border-l   dark:border-l-dark_border_2 overflow-hidden">
     <div>
-      <ChatHeader typing={typing} onlineUsers={onlineUsers} user={user} activeConversation={activeConversation}/>
+      <ChatHeader callUser={callUser} typing={typing} onlineUsers={onlineUsers} user={user} activeConversation={activeConversation}/>
       {
       files.length<1?(
         <>

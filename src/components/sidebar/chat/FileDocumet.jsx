@@ -2,7 +2,7 @@ import React from "react";
 import DownloadIcon from "../../../assets/svg/DownloadIcon";
 
 export default function FileDocument({ url, type }) {
-  console.log(url);
+  
   return (
     <div className="cursor-pointer bg-green_4 p-2 rounded-lg ">
       <div className="flex justify-between gap-x-8">

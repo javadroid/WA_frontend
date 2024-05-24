@@ -21,7 +21,7 @@ export default function PhotoAttachment() {
         file.type !== "video/webm" &&
         file.type !== "image/webp"
       ) {
-        console.log("object nothing",file.type)
+  
         files.filter((item) => item.name !== file.name);
         return;
       } else {

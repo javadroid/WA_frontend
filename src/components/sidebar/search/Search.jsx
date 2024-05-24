@@ -10,7 +10,7 @@ export default function Search({ searchLength,setsearchResult }) {
   const handleSearchKey = async (e) => {
     const input = e.target.value;
     if (input && e.key === "Enter") {
-      console.log(input);
+      
       try {
         const { data } = await axios.get(`${import.meta.env.VITE_API_ENDPOINT}/user?search=${input}`, {
           headers: {

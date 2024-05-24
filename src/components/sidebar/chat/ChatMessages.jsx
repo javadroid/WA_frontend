@@ -15,7 +15,7 @@ export default function ChatMessages({ user, messages, typing }) {
       <div className="scrollbar overflow_scrollbar overflow-auto py-2 px-[5%]">
         {messages &&
           messages.map((msg, i) => (
-           <>
+           <div key={i}>
 
            {
             msg?.files.length>0&& msg.files.map((file,i)=>(
@@ -36,7 +36,7 @@ export default function ChatMessages({ user, messages, typing }) {
             />
             )
           }
-           </>
+           </div>
             
           ))}
         {typing && <Typing />}
