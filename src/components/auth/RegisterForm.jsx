@@ -39,7 +39,7 @@ export default function RegisterForm() {
     }
     const result = await dispatch(registerUser({ ...data }));
     if (result.type.includes("fulfilled")) {
-      // navigate("/home");
+      navigate("/home");
     }else{
 //  await deletePicture(data.asset_id).then(async (res) => {
 //   console.log("res",res)

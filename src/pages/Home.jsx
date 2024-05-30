@@ -37,6 +37,7 @@ function Home({ socket }) {
   const [stream, setstream] = useState(false);
   const [call, setcall] = useState(callData);
   const [show, setshow] = useState(false);
+  const [test, settest] = useState(false);
   const myVideo = useRef();
   const userVideo = useRef();
   const connectRef = useRef();
@@ -68,57 +69,42 @@ function Home({ socket }) {
 
   //call useEffect
   useEffect(() => {
+    console.log("starting call")
     setupMedia();
-
     socket.on("setup_socket", (id) => {
       setcall({ ...call, socketId: id });
     });
-
     socket.on("call_user", (data) => {
+      setcallAccepted(false)
       setcall({
         ...call,
-        callEnded:false,
+        
+        callEnded: false,
         socketId: data.from,
         name: data.name,
         picture: data.picture,
         signal: data.signal,
         receivingCall: true,
+        
       });
     });
-
     socket.on("end_call", () => {
       setshow(false);
-      
       setcall({ ...call, callEnded: true, receivingCall: false });
       myVideo.current.srcObject = null;
-      setcallAccepted(false)
       if (callAccepted) {
         connectRef?.current?.destroy();
+        settest(!test)
       }
     });
-  }, []);
-  const setupMedia = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stm) => {
-        setstream(stm);
-      });
-  };
-
-  const endCall = () => {
-    setshow(false);
-   
-    setcall({ ...call, callEnded: true, receivingCall: false });
-    myVideo.current.srcObject = null;
-    socket.emit("end_call", call.socketId);
-    setcallAccepted(false)
-    connectRef?.current?.destroy();
-  };
+  }, [test]);
+  //--call user funcion
   const callUser = () => {
-    
     enableMedia();
+    setcallAccepted(false)
     setcall({
       ...call,
+      receivingCall: false,
       callEnded: false,
       name: getConversationName(user, activeConversation.users),
       picture: getConversationPicture(user, activeConversation.users),
@@ -128,46 +114,35 @@ function Home({ socket }) {
       trickle: false,
       stream: stream,
     });
-
     peer.on("signal", (data) => {
-      console.log("data", data);
       socket.emit("call_user", {
         userToCall: getConversationId(user, activeConversation.users),
         signal: data,
-        from: call?.socketId,
+        from: call.socketId,
         name: user.name,
         picture: user.picture,
       });
     });
-
     peer.on("stream", (stream) => {
       userVideo.current.srcObject = stream;
     });
-    
     socket.on("call_accepted", (signal) => {
-
-      console.log("call_accepted",signal)
       setcallAccepted(true);
       peer.signal(signal);
     });
     connectRef.current = peer;
-   
   };
-
+  //--answer call  funcion
   const answerCall = () => {
     enableMedia();
     setcallAccepted(true);
-
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream: stream,
     });
     peer.on("signal", (data) => {
-      socket.emit("answer_call", {
-        signal: data,
-        to: call.socketId,
-      });
+      socket.emit("answer_call", { signal: data, to: call.socketId });
     });
     peer.on("stream", (stream) => {
       userVideo.current.srcObject = stream;
@@ -175,10 +150,28 @@ function Home({ socket }) {
     peer.signal(call.signal);
     connectRef.current = peer;
   };
+  //--end call  funcion
+  const endCall = () => {
+    setshow(false);
+    setcall({ ...call, callEnded: true, receivingCall: false });
+    myVideo.current.srcObject = null;
+    socket.emit("end_call", call.socketId);
+    console.log("call.socketId",call.socketId)
+    connectRef?.current?.destroy();
+    settest(!test)
+  };
+  //--------------------------
+  const setupMedia = () => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        setstream(stream);
+      });
+  };
 
   const enableMedia = () => {
-    setshow(true);
     myVideo.current.srcObject = stream;
+    setshow(true);
   };
   return (
     <>

@@ -26,7 +26,7 @@ export default function LoginForm() {
     const result = await dispatch(loginUser({ ...data }));
     if (result.type.includes("fulfilled")) {
       console.log(result)
-      // navigate("/home");
+      navigate("/home");
     }else{
 //  await deletePicture(data.asset_id).then(async (res) => {
 //   console.log("res",res)

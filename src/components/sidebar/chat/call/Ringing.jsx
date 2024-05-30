@@ -39,7 +39,7 @@ export default function Ringing({endCall, callAccepted,answerCall, call, setcall
         </div>
 
         <ul className="flex items-center gap-x-2">
-          <li>
+          <li onClick={endCall}>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500">
               <CloseIcon className={"fill-white w-5"} />
             </button>
