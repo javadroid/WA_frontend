@@ -1,8 +1,7 @@
-# React + Vite
+# WhatsApp
+Real time web application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend: Reactjs, Tailwindcss
+Backend: Nodejs, MongoDB, Socket.io
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+have a feel https://wa-frontend-4fcn.onrender.com/login
